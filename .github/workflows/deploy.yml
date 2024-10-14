@@ -21,8 +21,10 @@ jobs:
 
       - name: Change to CDK directory
         working-directory: ./cdk
+        run: pwd
 
       - name: Install CDK and Node modules
+        working-directory: ./cdk  
         run: |
           npm install -g aws-cdk
           npm install
@@ -35,13 +37,16 @@ jobs:
           aws-region: us-east-1 # Specify your AWS region
 
       - name: CDK Bootstrap (if needed)
+        working-directory: ./cdk
         run: cdk bootstrap aws://975050126670/us-east-1
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Synthesize CDK
+        working-directory: ./cdk
         run: cdk synth
 
       - name: Deploy CDK
+        working-directory: ./cdk
         run: cdk deploy --require-approval never
