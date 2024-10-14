@@ -1,0 +1,44 @@
+name: CDK Deploy
+
+on:
+  # Trigger this workflow on push to the main branch (or your chosen branch)
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16' # Use the Node.js version you need
+
+      - name: Install CDK and Node modules
+        run: |
+          npm install -g aws-cdk
+          npm install
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1 # Specify your AWS region
+
+      - name: CDK Bootstrap (if needed)
+        run: cdk bootstrap aws://975050126670/us-east-1
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Synthesize CDK
+        run: cdk synth
+
+      - name: Deploy CDK
+        run: cdk deploy --require-approval never
