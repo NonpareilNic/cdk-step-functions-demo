@@ -19,6 +19,9 @@ jobs:
         with:
           node-version: '16' # Use the Node.js version you need
 
+      - name: Change to CDK directory
+        working-directory: ./cdk
+
       - name: Install CDK and Node modules
         run: |
           npm install -g aws-cdk
